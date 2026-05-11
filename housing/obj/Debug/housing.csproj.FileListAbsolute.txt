@@ -1,0 +1,10 @@
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.csproj.AssemblyReference.cache
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\HousingApp.Form1.resources
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.Properties.Resources.resources
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.csproj.GenerateResource.cache
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.csproj.CoreCompileInputs.cache
+C:\Users\VICTUS\source\repos\housing\housing\bin\Debug\housing.exe.config
+C:\Users\VICTUS\source\repos\housing\housing\bin\Debug\housing.exe
+C:\Users\VICTUS\source\repos\housing\housing\bin\Debug\housing.pdb
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.exe
+C:\Users\VICTUS\source\repos\housing\housing\obj\Debug\housing.pdb
