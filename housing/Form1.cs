@@ -10,7 +10,7 @@ namespace HousingApp
     public partial class Form1 : Form
     {
         private const string ConnStr =
-            "Data Source=Hesham;Initial Catalog=HousingDB;Integrated Security=True;TrustServerCertificate=True;";
+            "Data Source=localhost;Initial Catalog=HousingDB;Integrated Security=True;TrustServerCertificate=True;";
 
         // ═══════════════ LUXURY DARK PALETTE ═══════════════
         private static readonly Color C_BG = Color.FromArgb(10, 13, 22);   // Deep void
@@ -25,7 +25,10 @@ namespace HousingApp
         private static readonly Color C_DANGER = Color.FromArgb(230, 76, 76);
         private static readonly Color C_INPUT_BG = Color.FromArgb(13, 17, 30);
 
-        private TabControl tabs;
+        private Panel navPanel;
+        private Panel contentPanel;
+        private Button btnNavAddRep, btnNavAddClient, btnNavAddUnit, btnNavDelete, btnNavUpdate, btnNavViewUnits, btnNavViewTours;
+        private Panel currentPanel;
 
         private TextBox txtRepName, txtRepEmail, txtRepPhone, txtRepLicense;
         private GoldButton btnAddRep;
@@ -62,91 +65,177 @@ namespace HousingApp
         private void InitUI()
         {
             this.Text = "PRESTIGE  ·  Property Marketplace";
-            this.Size = new Size(940, 660);
-            this.MinimumSize = new Size(860, 580);
+            this.Size = new Size(1200, 720);
+            this.MinimumSize = new Size(1000, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = C_BG;
             this.Font = new Font("Segoe UI", 9.5f);
             this.ForeColor = C_TEXT;
 
-            // ── Header strip ──
-            var header = new HeaderPanel();
-            header.Dock = DockStyle.Top;
-            header.Height = 68;
+            // ── Navigation Panel (Side Bar) ──
+            navPanel = new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 240,
+                BackColor = Color.FromArgb(13, 17, 30),
+                Padding = new Padding(0, 20, 0, 20)
+            };
 
-            var logoLbl = new Label
+            // Add custom paint for navigation panel
+            navPanel.Paint += (s, e) => {
+                var g = e.Graphics;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                
+                // Right border with gold gradient
+                using (var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    new Rectangle(navPanel.Width - 3, 0, 3, navPanel.Height),
+                    Color.FromArgb(197, 160, 80, 60),
+                    Color.FromArgb(197, 160, 80, 20),
+                    System.Drawing.Drawing2D.LinearGradientMode.Vertical))
+                    g.FillRectangle(brush, navPanel.Width - 3, 0, 3, navPanel.Height);
+            };
+
+            // Logo in nav with subtitle
+            var navLogo = new Label
             {
                 Text = "◈  PRESTIGE",
-                Font = new Font("Palatino Linotype", 15f, FontStyle.Bold),
+                Font = new Font("Palatino Linotype", 16f, FontStyle.Bold),
                 ForeColor = C_GOLD,
-                Location = new Point(26, 18),
+                Location = new Point(20, 15),
                 AutoSize = true
             };
-            var subtitleLbl = new Label
-            {
-                Text = "RESIDENTIAL PROPERTY MARKETPLACE",
-                Font = new Font("Segoe UI", 7f, FontStyle.Bold),
-                ForeColor = C_TEXT2,
-                Location = new Point(28, 44),
-                AutoSize = true
-            };
-            header.Controls.Add(logoLbl);
-            header.Controls.Add(subtitleLbl);
+            navPanel.Controls.Add(navLogo);
 
-            // ── Tab control ──
-            tabs = new TabControl
+            var navSubtitle = new Label
+            {
+                Text = "Property Management",
+                Font = new Font("Segoe UI", 7f, FontStyle.Regular),
+                ForeColor = C_TEXT2,
+                Location = new Point(22, 42),
+                AutoSize = true
+            };
+            navPanel.Controls.Add(navSubtitle);
+
+            // Separator line
+            var separator = new Panel
+            {
+                Location = new Point(20, 70),
+                Size = new Size(190, 1),
+                BackColor = Color.FromArgb(35, 45, 75)
+            };
+            navPanel.Controls.Add(separator);
+
+            // Navigation buttons
+            int yPos = 90;
+            btnNavAddRep = CreateNavButton("Add Representative", yPos); yPos += 48;
+            btnNavAddClient = CreateNavButton("Add Client", yPos); yPos += 48;
+            btnNavAddUnit = CreateNavButton("Add Unit", yPos); yPos += 48;
+            btnNavDelete = CreateNavButton("Delete", yPos); yPos += 48;
+            btnNavUpdate = CreateNavButton("Update", yPos); yPos += 48;
+            btnNavViewUnits = CreateNavButton("All Units", yPos); yPos += 48;
+            btnNavViewTours = CreateNavButton("Tours", yPos);
+
+            // Content panel
+            contentPanel = new Panel
             {
                 Dock = DockStyle.Fill,
-                DrawMode = TabDrawMode.OwnerDrawFixed,
-                ItemSize = new Size(118, 40),
-                SizeMode = TabSizeMode.Fixed,
-                Appearance = TabAppearance.FlatButtons,
-                Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 BackColor = C_BG
             };
-            tabs.DrawItem += DrawTab;
 
-            tabs.TabPages.Add(BuildTabAddRep());
-            tabs.TabPages.Add(BuildTabAddClient());
-            tabs.TabPages.Add(BuildTabAddUnit());
-            tabs.TabPages.Add(BuildTabDelete());
-            tabs.TabPages.Add(BuildTabUpdate());
-            tabs.TabPages.Add(BuildTabViewUnits());
-            tabs.TabPages.Add(BuildTabViewTours());
+            // Set up navigation events
+            btnNavAddRep.Click += (s, e) => SwitchToPanel(BuildTabAddRep());
+            btnNavAddClient.Click += (s, e) => SwitchToPanel(BuildTabAddClient());
+            btnNavAddUnit.Click += (s, e) => SwitchToPanel(BuildTabAddUnit());
+            btnNavDelete.Click += (s, e) => SwitchToPanel(BuildTabDelete());
+            btnNavUpdate.Click += (s, e) => SwitchToPanel(BuildTabUpdate());
+            btnNavViewUnits.Click += (s, e) => { SwitchToPanel(BuildTabViewUnits()); LoadUnits(); };
+            btnNavViewTours.Click += (s, e) => { SwitchToPanel(BuildTabViewTours()); LoadTours(); };
 
-            tabs.SelectedIndexChanged += (s, e) => {
-                if (tabs.SelectedIndex == 5) this.BeginInvoke(new Action(LoadUnits));
-                if (tabs.SelectedIndex == 6) this.BeginInvoke(new Action(LoadTours));
-            };
+            // Show default panel
+            SwitchToPanel(BuildTabAddRep());
 
-            this.Controls.Add(tabs);
-            this.Controls.Add(header);
+            this.Controls.Add(contentPanel);
+            this.Controls.Add(navPanel);
         }
 
-        // ═══════════════ CUSTOM TAB DRAWING ═══════════════
-        private void DrawTab(object sender, DrawItemEventArgs e)
+        // ═══════════════ NAVIGATION HELPERS ═══════════════
+        private Button CreateNavButton(string text, int yPos)
         {
-            bool sel = (tabs.SelectedIndex == e.Index);
-            Rectangle r = tabs.GetTabRect(e.Index);
-
-            // Background
-            Color bg = sel ? C_SURFACE2 : C_BG;
-            using (var b = new SolidBrush(bg))
-                e.Graphics.FillRectangle(b, r);
-
-            // Gold underline for selected
-            if (sel)
+            var btn = new Button
             {
+                Text = text,
+                Location = new Point(10, yPos),
+                Size = new Size(190, 42),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(17, 22, 38),
+                ForeColor = C_TEXT2,
+                Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(15, 0, 0, 0),
+                Cursor = Cursors.Hand
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(197, 160, 80, 50);
+            btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(197, 160, 80, 80);
+            
+            // Add custom paint for gold accent
+            btn.Paint += (s, e) => {
+                var g = e.Graphics;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                
+                // Gold left accent line
                 using (var pen = new Pen(C_GOLD, 2))
-                    e.Graphics.DrawLine(pen, r.Left + 6, r.Bottom - 2, r.Right - 6, r.Bottom - 2);
-            }
+                    g.DrawLine(pen, 0, 0, 0, btn.Height);
+                
+                // Subtle gradient on hover
+                if (btn.ClientRectangle.Contains(btn.PointToClient(Cursor.Position)))
+                {
+                    using (var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                        btn.ClientRectangle, 
+                        Color.FromArgb(197, 160, 80, 20), 
+                        Color.FromArgb(197, 160, 80, 5), 
+                        System.Drawing.Drawing2D.LinearGradientMode.Horizontal))
+                        g.FillRectangle(brush, btn.ClientRectangle);
+                }
+            };
+            
+            // Enhanced hover effects
+            btn.MouseEnter += (s, e) => { 
+                btn.BackColor = Color.FromArgb(197, 160, 80, 50); 
+                btn.ForeColor = C_GOLD_LT; 
+                btn.Invalidate(); 
+            };
+            btn.MouseLeave += (s, e) => { 
+                btn.BackColor = Color.FromArgb(17, 22, 38); 
+                btn.ForeColor = C_TEXT2; 
+                btn.Invalidate(); 
+            };
+            
+            navPanel.Controls.Add(btn);
+            return btn;
+        }
 
-            // Text
-            Color fg = sel ? C_GOLD_LT : C_TEXT2;
-            var tf = sel ? FontStyle.Bold : FontStyle.Regular;
-            TextRenderer.DrawText(e.Graphics, tabs.TabPages[e.Index].Text,
-                new Font("Segoe UI", 8.5f, tf), r, fg,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        private void SwitchToPanel(Panel newPanel)
+        {
+            if (currentPanel != null)
+                contentPanel.Controls.Remove(currentPanel);
+            
+            currentPanel = newPanel;
+            currentPanel.Dock = DockStyle.Fill;
+            contentPanel.Controls.Add(currentPanel);
+            
+            // Reset all button colors
+            ResetNavButtonColors();
+        }
+
+        private void ResetNavButtonColors()
+        {
+            var buttons = new[] { btnNavAddRep, btnNavAddClient, btnNavAddUnit, btnNavDelete, btnNavUpdate, btnNavViewUnits, btnNavViewTours };
+            foreach (var btn in buttons)
+            {
+                btn.BackColor = Color.FromArgb(17, 22, 38);
+                btn.ForeColor = C_TEXT2;
+            }
         }
 
         // ═══════════════ FACTORY HELPERS ═══════════════
@@ -241,10 +330,10 @@ namespace HousingApp
 
         private SqlConnection GetConn() => new SqlConnection(ConnStr);
 
-        // ═══════════════ TAB 1 – ADD REP ═══════════════
-        private TabPage BuildTabAddRep()
+        // ═══════════════ PANEL 1 – ADD REP ═══════════════
+        private Panel BuildTabAddRep()
         {
-            var tab = new TabPage("Add Rep") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
             var card = MakeCard(30, 22, 460, 360);
             card.Controls.Add(MakeSectionTitle("◈  Add Representative", 18, 18));
 
@@ -258,9 +347,9 @@ namespace HousingApp
             card.Controls.Add(btnAddRep);
 
             lblRepResult = MakeResult(30, 398);
-            tab.Controls.Add(card);
-            tab.Controls.Add(lblRepResult);
-            return tab;
+            panel.Controls.Add(card);
+            panel.Controls.Add(lblRepResult);
+            return panel;
         }
 
         private void BtnAddRep_Click(object sender, EventArgs e)
@@ -283,9 +372,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 2 – ADD CLIENT ═══════════════
-        private TabPage BuildTabAddClient()
+        private Panel BuildTabAddClient()
         {
-            var tab = new TabPage("Add Client") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
             var card = MakeCard(30, 22, 460, 360);
             card.Controls.Add(MakeSectionTitle("◈  Register Client", 18, 18));
 
@@ -299,9 +388,9 @@ namespace HousingApp
             card.Controls.Add(btnAddClient);
 
             lblClientResult = MakeResult(30, 398);
-            tab.Controls.Add(card);
-            tab.Controls.Add(lblClientResult);
-            return tab;
+            panel.Controls.Add(card);
+            panel.Controls.Add(lblClientResult);
+            return panel;
         }
 
         private void BtnAddClient_Click(object sender, EventArgs e)
@@ -324,9 +413,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 3 – ADD UNIT ═══════════════
-        private TabPage BuildTabAddUnit()
+        private Panel BuildTabAddUnit()
         {
-            var tab = new TabPage("Add Unit") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
             var card = MakeCard(30, 22, 460, 420);
             card.Controls.Add(MakeSectionTitle("◈  Add Housing Unit", 18, 18));
 
@@ -341,9 +430,9 @@ namespace HousingApp
             card.Controls.Add(btnAddUnit);
 
             lblUnitResult = MakeResult(30, 458);
-            tab.Controls.Add(card);
-            tab.Controls.Add(lblUnitResult);
-            return tab;
+            panel.Controls.Add(card);
+            panel.Controls.Add(lblUnitResult);
+            return panel;
         }
 
         private void BtnAddUnit_Click(object sender, EventArgs e)
@@ -367,9 +456,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 4 – DELETE ═══════════════
-        private TabPage BuildTabDelete()
+        private Panel BuildTabDelete()
         {
-            var tab = new TabPage("Delete") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
 
             // Card 1: Delete Client
             var c1 = MakeCard(30, 22, 500, 158);
@@ -395,10 +484,10 @@ namespace HousingApp
             c2.Controls.Add(btnDelUnit);
 
             lblDelResult = MakeResult(30, 374);
-            tab.Controls.Add(c1);
-            tab.Controls.Add(c2);
-            tab.Controls.Add(lblDelResult);
-            return tab;
+            panel.Controls.Add(c1);
+            panel.Controls.Add(c2);
+            panel.Controls.Add(lblDelResult);
+            return panel;
         }
 
         private void BtnDelClient_Click(object sender, EventArgs e)
@@ -438,9 +527,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 5 – UPDATE ═══════════════
-        private TabPage BuildTabUpdate()
+        private Panel BuildTabUpdate()
         {
-            var tab = new TabPage("Update") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
 
             var c1 = MakeCard(30, 22, 580, 188);
             c1.Controls.Add(MakeSectionTitle("◈  Update Unit Status", 18, 16));
@@ -467,10 +556,10 @@ namespace HousingApp
             c2.Controls.Add(btnUpdRepPhone);
 
             lblUpdResult = MakeResult(30, 416);
-            tab.Controls.Add(c1);
-            tab.Controls.Add(c2);
-            tab.Controls.Add(lblUpdResult);
-            return tab;
+            panel.Controls.Add(c1);
+            panel.Controls.Add(c2);
+            panel.Controls.Add(lblUpdResult);
+            return panel;
         }
 
         private void BtnUpdStatus_Click(object sender, EventArgs e)
@@ -552,9 +641,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 6 – ALL UNITS ═══════════════
-        private TabPage BuildTabViewUnits()
+        private Panel BuildTabViewUnits()
         {
-            var tab = new TabPage("All Units") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
             var top = new Panel { Location = new Point(24, 16), Size = new Size(868, 48), BackColor = Color.Transparent };
             top.Controls.Add(MakeSectionTitle("◈  All Housing Units", 0, 10));
             var btn = MakeBtn("⟳  Refresh", 686, 4); btn.Width = 160;
@@ -570,9 +659,9 @@ namespace HousingApp
             gridUnits.Columns.Add(MakeCol("repres_id", "Rep ID", 80));
             gridUnits.Location = new Point(24, 70);
             gridUnits.Size = new Size(868, 460);
-            tab.Controls.Add(top);
-            tab.Controls.Add(gridUnits);
-            return tab;
+            panel.Controls.Add(top);
+            panel.Controls.Add(gridUnits);
+            return panel;
         }
 
         private void BtnViewUnits_Click(object sender, EventArgs e) => LoadUnits();
@@ -595,9 +684,9 @@ namespace HousingApp
         }
 
         // ═══════════════ TAB 7 – TOURS ═══════════════
-        private TabPage BuildTabViewTours()
+        private Panel BuildTabViewTours()
         {
-            var tab = new TabPage("Tours") { BackColor = C_BG };
+            var panel = new Panel { BackColor = C_BG };
             var top = new Panel { Location = new Point(24, 16), Size = new Size(868, 48), BackColor = Color.Transparent };
             top.Controls.Add(MakeSectionTitle("◈  Scheduled Tours", 0, 10));
             var btn = MakeBtn("⟳  Refresh", 686, 4); btn.Width = 160;
@@ -615,9 +704,9 @@ namespace HousingApp
             gridTours.Columns.Add(MakeCol("representative", "Rep", 140));
             gridTours.Location = new Point(24, 70);
             gridTours.Size = new Size(868, 460);
-            tab.Controls.Add(top);
-            tab.Controls.Add(gridTours);
-            return tab;
+            panel.Controls.Add(top);
+            panel.Controls.Add(gridTours);
+            return panel;
         }
 
         private void BtnViewTours_Click(object sender, EventArgs e) => LoadTours();
