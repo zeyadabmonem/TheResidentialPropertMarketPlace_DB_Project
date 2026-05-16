@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -517,9 +517,21 @@ namespace HousingApp
             try
             {
                 con = GetConn(); con.Open();
-                var cmd = new SqlCommand("DELETE FROM dbo.housing_unit WHERE unit_id=@id AND status!='sold'", con);
-                cmd.Parameters.AddWithValue("@id", id);
-                int rows = cmd.ExecuteNonQuery();
+                
+                // First, delete related records from client_tour and tour to avoid FK conflicts
+                var cmd1 = new SqlCommand("DELETE FROM dbo.client_tour WHERE tour_id IN (SELECT tour_id FROM dbo.tour WHERE unit_id=@id)", con);
+                cmd1.Parameters.AddWithValue("@id", id);
+                cmd1.ExecuteNonQuery();
+
+                var cmd2 = new SqlCommand("DELETE FROM dbo.tour WHERE unit_id=@id", con);
+                cmd2.Parameters.AddWithValue("@id", id);
+                cmd2.ExecuteNonQuery();
+
+                // Now delete the unit itself
+                var cmd3 = new SqlCommand("DELETE FROM dbo.housing_unit WHERE unit_id=@id AND status!='sold'", con);
+                cmd3.Parameters.AddWithValue("@id", id);
+                int rows = cmd3.ExecuteNonQuery();
+                
                 ShowResult(lblDelResult, rows > 0, rows > 0 ? $"Unit #{id} removed." : "Unit not found or already sold.");
             }
             catch (Exception ex) { ShowResult(lblDelResult, false, ex.Message); }
