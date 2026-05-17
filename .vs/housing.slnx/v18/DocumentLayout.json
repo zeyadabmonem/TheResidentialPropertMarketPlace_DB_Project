@@ -3,11 +3,11 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Documents\\GitHub\\TheResidentialPropertMarketPlace_DB_Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|c:\\users\\user\\documents\\github\\theresidentialpropertmarketplace_db_project\\housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
-      "RelativeMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|solutionrelative:housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+      "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|c:\\users\\user\\documents\\github\\theresidentialpropertmarketplace_db_project\\housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|solutionrelative:housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|c:\\users\\user\\documents\\github\\theresidentialpropertmarketplace_db_project\\housing\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|C:\\Users\\User\\Documents\\GitHub\\TheResidentialPropertMarketPlace_DB_Project\\housing\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|solutionrelative:housing\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -25,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|C:\\Users\\User\\Documents\\GitHub\\TheResidentialPropertMarketPlace_DB_Project\\housing\\form1.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
       "RelativeMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|solutionrelative:housing\\form1.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|c:\\users\\user\\documents\\github\\theresidentialpropertmarketplace_db_project\\housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
-      "RelativeMoniker": "D:0:0:{488CC79C-4618-4029-8395-7C9E3F3A4EF0}|housing\\housing.csproj|solutionrelative:housing\\sampledata.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
     }
   ],
   "DocumentGroupContainers": [
@@ -48,9 +44,7 @@
               "RelativeDocumentMoniker": "housing\\SampleData.sql",
               "ToolTip": "C:\\Users\\User\\Documents\\GitHub\\TheResidentialPropertMarketPlace_DB_Project\\housing\\SampleData.sql",
               "RelativeToolTip": "housing\\SampleData.sql",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2026-05-12T10:42:53.256Z",
-              "EditorCaption": ""
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|"
             },
             {
               "$type": "Document",
@@ -61,8 +55,7 @@
               "ToolTip": "C:\\Users\\User\\Documents\\GitHub\\TheResidentialPropertMarketPlace_DB_Project\\housing\\Form1.cs [Design]",
               "RelativeToolTip": "housing\\Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T10:33:33.684Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2026-05-12T10:33:33.684Z"
             },
             {
               "$type": "Document",
@@ -74,8 +67,7 @@
               "RelativeToolTip": "housing\\Form1.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-11T20:22:21.309Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-11T20:22:21.309Z"
             },
             {
               "$type": "Document",
